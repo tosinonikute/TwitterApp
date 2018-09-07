@@ -13,7 +13,6 @@ import com.example1.twitterapp.R
 import com.example1.twitterapp.model.Tweets
 import com.example1.twitterapp.ui.detail.DetailActivity
 import com.example1.twitterapp.util.ImageUtil
-import com.example1.twitterapp.util.ImageUtil.Companion.displayImage
 
 class ListAdapter(val context: Context, val mItem: MutableList<Tweets>?): RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
 
@@ -57,11 +56,9 @@ class ListAdapter(val context: Context, val mItem: MutableList<Tweets>?): Recycl
             val activity = v.context as Activity
             activity.startActivity(intent)
         }
-
     }
 
     override fun getItemCount(): Int{
         return mItem!!.size
     }
-
 }

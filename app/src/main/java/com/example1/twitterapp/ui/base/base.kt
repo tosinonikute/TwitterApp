@@ -1,15 +1,22 @@
 package com.example1.twitterapp.ui.base
 
+import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
 import com.example1.twitterapp.R
+import dagger.android.AndroidInjection
 
 abstract class BaseActivity: AppCompatActivity() {
 
     protected abstract fun loadView()
     private var snackbarOffline: Snackbar? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
+        super.onCreate(savedInstanceState)
+    }
 
     fun displayedFailedConnection(){
         displayOfflineSnackBar("No Connection")

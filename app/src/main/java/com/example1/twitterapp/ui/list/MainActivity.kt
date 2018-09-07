@@ -1,6 +1,6 @@
 package com.example1.twitterapp.ui.list
 
-import android.support.v7.app.AppCompatActivity
+import android.arch.lifecycle.*
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -14,17 +14,16 @@ import com.example1.twitterapp.util.NetworkUtil
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.graphics.drawable.Drawable
 import android.widget.ImageView
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.RequestOptions.bitmapTransform
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.transition.Transition
+import com.example1.twitterapp.BaseApplication
 import com.example1.twitterapp.model.User
+import com.example1.twitterapp.repository.TweetsRepository
 import com.example1.twitterapp.util.ImageUtil
+import dagger.android.AndroidInjection
+import javax.inject.Inject
 
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), LifecycleOwner {
 
     /**
      * I plan to implement view model to save states when pulling from the network
@@ -43,13 +42,32 @@ class MainActivity : BaseActivity() {
     private lateinit var adapter: ListAdapter
     private var profilePic: ImageView? = null
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    lateinit var viewModel : TweetsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // initialize views
         initViews()
+
+        // load content
         loadView()
+    }
+
+    fun displayTweets(tweetList: List<Tweets>){
+        adapter = ListAdapter(applicationContext, tweetList.toMutableList())
+        recyclerView.adapter = adapter
+
+        val user = tweetList.get(0).user
+        setProfilePic(user?.profileImageUrl!!)
+
+        if(tweetList.isNotEmpty()) {
+            setUserBG(tweetList.get(0).user?.profileBackgroundImageUrl.toString())
+        }
     }
 
     fun initViews(){
@@ -63,59 +81,25 @@ class MainActivity : BaseActivity() {
     override fun loadView(){
         if(NetworkUtil.isConnected(applicationContext)){
 
-            loadTeets()
+            viewModel = ViewModelProviders.of(this, viewModelFactory)[TweetsViewModel::class.java]
+            viewModel.init()
+            viewModel.tweets!!.observe(this, Observer<List<Tweets>> { tweetList: List<Tweets>? ->
+                // Update views
+                displayTweets(tweetList!!)
+            })
 
         } else {
             displayedFailedConnection()
         }
     }
 
-    fun loadTeets(){
-
-        RestClient.instance!!.listTweets().enqueue(object: Callback<List<Tweets>> {
-            override fun onResponse(call: Call<List<Tweets>>, reponse: Response<List<Tweets>>){
-
-                if(reponse.code() == 200){
-                    val tweets = reponse.body()
-                    Log.d(TAG, tweets!!.get(0).user!!.name.toString())
-                    adapter = ListAdapter(applicationContext, tweets.toMutableList())
-                    recyclerView.adapter = adapter
-
-                    val user = tweets.get(0).user
-                    setProfilePic(user?.profileImageUrl!!)
-
-                    if(tweets.isNotEmpty()) {
-                        setUserBG(tweets.get(0).user?.profileBackgroundImageUrl.toString())
-                    }
-
-                } else {
-                    //
-                }
-            }
-
-            override fun onFailure(call: Call<List<Tweets>>, t: Throwable){
-
-            }
-        });
-
-    }
-
     fun setUserBG(bgSource: String){
-        ImageUtil
-                .displayImageDrawable(
-                        applicationContext,
-                        bgSource,
-                        linearLayout
-                )
+        ImageUtil.displayImageDrawable(
+                applicationContext, bgSource, linearLayout)
     }
 
     fun setProfilePic(profilePicUrl: String){
-        ImageUtil
-                .displayImage(
-                        applicationContext,
-                        profilePicUrl,
-                        profilePic!!,
-                        R.drawable.place_holder
-                )
+        ImageUtil.displayImage(
+                applicationContext, profilePicUrl, profilePic!!, R.drawable.place_holder)
     }
 }
