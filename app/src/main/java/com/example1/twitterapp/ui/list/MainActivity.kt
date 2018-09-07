@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.View
 import android.widget.LinearLayout
 import com.example1.twitterapp.R
 import com.example1.twitterapp.data.RestClient
@@ -15,6 +16,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.widget.ImageView
+import android.widget.ProgressBar
 import com.example1.twitterapp.BaseApplication
 import com.example1.twitterapp.model.User
 import com.example1.twitterapp.repository.TweetsRepository
@@ -25,16 +27,8 @@ import javax.inject.Inject
 
 class MainActivity : BaseActivity(), LifecycleOwner {
 
-    /**
-     * I plan to implement view model to save states when pulling from the network
-     * I plan to use Dependency Injection with Viewmodel as well
-     * For now, i will be using config Changes in Manifest
-     * * Important: I also plan to write Unit Test to test the API and Viewmodel, I will send my updated codes *
-     *
-     * Reason: No Enough Time
-     */
-
     private val TAG: String = "${MainActivity::class.qualifiedName}"
+    private var progressBar: ProgressBar? = null
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var linearLayout: LinearLayout
@@ -59,6 +53,7 @@ class MainActivity : BaseActivity(), LifecycleOwner {
     }
 
     fun displayTweets(tweetList: List<Tweets>){
+        hideProgress()
         adapter = ListAdapter(applicationContext, tweetList.toMutableList())
         recyclerView.adapter = adapter
 
@@ -76,11 +71,13 @@ class MainActivity : BaseActivity(), LifecycleOwner {
         recyclerView.layoutManager = linearLayoutManager
         linearLayout = findViewById(R.id.background_user) as LinearLayout
         profilePic = findViewById(R.id.profile_picture) as ImageView
+        progressBar = findViewById(R.id.progressbar) as ProgressBar
     }
 
     override fun loadView(){
         if(NetworkUtil.isConnected(applicationContext)){
 
+            showProgress()
             viewModel = ViewModelProviders.of(this, viewModelFactory)[TweetsViewModel::class.java]
             viewModel.init()
             viewModel.tweets!!.observe(this, Observer<List<Tweets>> { tweetList: List<Tweets>? ->
@@ -101,5 +98,13 @@ class MainActivity : BaseActivity(), LifecycleOwner {
     fun setProfilePic(profilePicUrl: String){
         ImageUtil.displayImage(
                 applicationContext, profilePicUrl, profilePic!!, R.drawable.place_holder)
+    }
+
+    fun showProgress(){
+        progressBar?.setVisibility(View.VISIBLE)
+    }
+
+    fun hideProgress(){
+        progressBar?.setVisibility(View.GONE)
     }
 }

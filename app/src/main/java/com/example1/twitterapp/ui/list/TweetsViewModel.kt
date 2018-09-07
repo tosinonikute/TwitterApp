@@ -20,5 +20,4 @@ constructor(private val tweetsRepo: TweetsRepository) : ViewModel() {
         }
         tweets = tweetsRepo.fetchTweets()
     }
-
 }

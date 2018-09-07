@@ -11,9 +11,6 @@ interface TwitterService {
     @GET("/api/statuses/user_timeline")
     fun listTweets(): Call<List<Tweets>>
 
-    @GET("/api/statuses/user_timeline")
-    fun listTweetsSample(): Call<Tweets>
-
     @GET("/api/user")
     fun listSingleUser(@Query("id") user_id: Int): Call<User>
 }

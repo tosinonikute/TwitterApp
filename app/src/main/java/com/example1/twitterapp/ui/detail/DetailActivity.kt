@@ -1,27 +1,26 @@
 package com.example1.twitterapp.ui.detail
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.example1.twitterapp.R
-import com.example1.twitterapp.data.RestClient
-import com.example1.twitterapp.model.Tweets
-import com.example1.twitterapp.model.User
 import com.example1.twitterapp.ui.base.BaseActivity
-import com.example1.twitterapp.ui.list.ListAdapter
-import com.example1.twitterapp.util.ImageUtil
 
 import kotlinx.android.synthetic.main.activity_detail.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import android.content.Intent
-import com.example1.twitterapp.ui.list.MainActivity
+import com.example1.twitterapp.model.Tweets
+import com.example1.twitterapp.model.User
+import com.example1.twitterapp.ui.list.ListAdapter
+import com.example1.twitterapp.util.ImageUtil
+import com.example1.twitterapp.util.NetworkUtil
+import javax.inject.Inject
 
 class DetailActivity : BaseActivity() {
 
@@ -31,19 +30,20 @@ class DetailActivity : BaseActivity() {
     private lateinit var name : TextView
     private lateinit var button : Button
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    lateinit var viewModel : DetailViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         getBundleData()
         initViews()
         loadView()
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
 
         share()
     }
@@ -56,8 +56,8 @@ class DetailActivity : BaseActivity() {
 
     fun share(){
         // Assumed twitter URL and Title
-        val str : String = "http://wizetwitter.com"
-        val title : String = "Twit Title shared"
+        val str = "http://wizetwitter.com"
+        val title = "Twit Title shared"
 
         button.setOnClickListener { view ->
             // share twitter
@@ -75,33 +75,26 @@ class DetailActivity : BaseActivity() {
 
     override fun loadView(){
         if(userId != -1) {
-            RestClient.instance!!.listSingleUser(userId).enqueue(object : Callback<User> {
-                override fun onResponse(call: Call<User>, reponse: Response<User>) {
+            if(NetworkUtil.isConnected(applicationContext)){
+                viewModel = ViewModelProviders.of(this, viewModelFactory)[DetailViewModel::class.java]
+                viewModel.init(userId)
+                viewModel.user!!.observe(this, Observer<User> { myuser: User? ->
+                    // Update views
+                    displayUserInfo(myuser!!)
+                })
 
-                    if (reponse.code() == 200) {
-                        val user = reponse.body()
-
-                        name.text = user!!.name
-                        val image = imageView;
-                        ImageUtil.displayImage(
-                                        imageView!!.context,
-                                        user.profileImageUrl!!,
-                                        image!!,
-                                        R.drawable.place_holder
-                                )
-
-                    } else {
-                        //
-                    }
-                }
-
-                override fun onFailure(call: Call<User>, t: Throwable) {
-
-                }
-            });
+            } else {
+                displayedFailedConnection()
+            }
         }
     }
 
+    fun displayUserInfo(user: User){
+        name.text = user.name
+        val image = imageView;
+        ImageUtil.displayImage(imageView.context, user.profileImageUrl!!, image,
+                R.drawable.place_holder)
+    }
 
     fun shareLink(link: String, title: String) {
         //sharing implementation here
