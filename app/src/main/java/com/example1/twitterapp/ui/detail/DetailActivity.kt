@@ -22,8 +22,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import android.content.Intent
 
-
-
 class DetailActivity : BaseActivity() {
 
     private val TAG: String = "DetailActivity"
@@ -31,9 +29,6 @@ class DetailActivity : BaseActivity() {
     private lateinit var imageView : ImageView
     private lateinit var name : TextView
     private lateinit var button : Button
-
-//    var name : TextView? = null
-//    var button : Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
