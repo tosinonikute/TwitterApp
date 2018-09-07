@@ -35,8 +35,7 @@ class MainActivity : BaseActivity() {
      * Reason: No Enough Time
      */
 
-    //private val TAG: String = "${MainActivity::class.qualifiedName}"
-    private val TAG: String = "MainActivity"
+    private val TAG: String = "${MainActivity::class.qualifiedName}"
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var linearLayout: LinearLayout

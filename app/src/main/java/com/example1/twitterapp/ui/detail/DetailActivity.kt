@@ -21,10 +21,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.content.Intent
+import com.example1.twitterapp.ui.list.MainActivity
 
 class DetailActivity : BaseActivity() {
 
-    private val TAG: String = "DetailActivity"
+    private val TAG: String = "${DetailActivity::class.qualifiedName}"
     private var userId : Int = -1;
     private lateinit var imageView : ImageView
     private lateinit var name : TextView
