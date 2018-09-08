@@ -22,6 +22,6 @@ class Tweets(
         val place: Any? = null,
         val contributors: Any? = null,
         val lang: String? = null,
-        val user: User? = null,
+        var user: User? = null,
         val favorited: Boolean? = null
 )

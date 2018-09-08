@@ -9,7 +9,7 @@ data class User(
         val listedCount: Int? = null,
 
         @SerializedName("profile_background_image_url")
-        val profileBackgroundImageUrl: String? = null,
+        var profileBackgroundImageUrl: String? = null,
 
         val defaultProfileImage: Boolean? = null,
         val favouritesCount: Int? = null,
@@ -33,7 +33,7 @@ data class User(
         val verified: Boolean? = null,
 
         @SerializedName("profile_image_url")
-        val profileImageUrl: String? = null,
+        var profileImageUrl: String? = null,
         val timeZone: Any? = null,
         val url: Any? = null,
         val contributorsEnabled: Boolean? = null,
@@ -46,7 +46,7 @@ data class User(
         val profileUseBackgroundImage: Boolean? = null,
         val defaultProfile: Boolean? = null,
         val following: Boolean? = null,
-        val name: String? = null,
+        var name: String? = null,
         val location: String? = null,
         val profileSidebarFillColor: String? = null,
         val notifications: Boolean? = null

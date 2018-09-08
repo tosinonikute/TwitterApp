@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import com.example1.twitterapp.R
-import com.example1.twitterapp.data.RestClient
 import com.example1.twitterapp.model.Tweets
 import com.example1.twitterapp.ui.base.BaseActivity
 import com.example1.twitterapp.util.NetworkUtil
@@ -76,7 +75,6 @@ class MainActivity : BaseActivity(), LifecycleOwner {
 
     override fun loadView(){
         if(NetworkUtil.isConnected(applicationContext)){
-
             showProgress()
             viewModel = ViewModelProviders.of(this, viewModelFactory)[TweetsViewModel::class.java]
             viewModel.init()

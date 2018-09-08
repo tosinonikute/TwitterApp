@@ -38,13 +38,17 @@ class ListAdapter(val context: Context, val mItem: MutableList<Tweets>?): Recycl
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val model = mItem!![holder.adapterPosition]
 
-        holder.description.text = model.user!!.description
-        holder.name.text = model.user.name
+        val name = model.user?.name
+        val description = model.user!!.description
+        val imgUrl = model.user?.profileImageUrl!!
+
+        holder.description.text = description
+        holder.name.text = name
 
         ImageUtil
                 .displayImage(
                         holder.imageView.context,
-                        model.user.profileImageUrl!!,
+                        imgUrl,
                         holder.imageView,
                         R.drawable.place_holder
                 )

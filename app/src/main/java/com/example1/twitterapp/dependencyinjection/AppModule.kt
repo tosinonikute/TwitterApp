@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 import com.example1.twitterapp.BaseApplication
+import com.example1.twitterapp.api.TwitterService
 import com.example1.twitterapp.factory.ViewModelModule
 import com.example1.twitterapp.repository.TweetsRepository
 import com.example1.twitterapp.repository.TweetsRepositoryImpl
@@ -20,7 +21,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideRepository(): TweetsRepository {
-        return TweetsRepositoryImpl()
+    fun provideRepository(twitterService: TwitterService): TweetsRepository {
+        return TweetsRepositoryImpl(twitterService)
     }
 }
