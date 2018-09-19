@@ -1,15 +1,19 @@
 package com.example1.twitterapp.ui.list
 
 import android.arch.lifecycle.LiveData
-import javax.inject.Inject
 import android.arch.lifecycle.ViewModel
 import com.example1.twitterapp.model.Tweets
 import com.example1.twitterapp.repository.TweetsRepository
+import com.example1.twitterapp.repository.TweetsRepositoryImpl
+import retrofit2.HttpException
+import retrofit2.Response
+import java.io.IOException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 
-class TweetsViewModel // Instructs Dagger 2 to provide the TweetsRepository data.
-@Inject
-constructor(private val tweetsRepo: TweetsRepository) : ViewModel() {
+class TweetsViewModel // provide the TweetsRepository data manually in activity.
+constructor(private val tweetsRepo: TweetsRepository) : ViewModel(), TweetsRepositoryImpl.TweetsRepositoryCallback {
 
     var tweets: LiveData<List<Tweets>>? = null
         private set
@@ -18,6 +22,11 @@ constructor(private val tweetsRepo: TweetsRepository) : ViewModel() {
         if (this.tweets != null) {
             return
         }
-        tweets = tweetsRepo.fetchTweets()
+        tweets = tweetsRepo.fetchTweets(this)
     }
+
+    override fun handleTweetsError(error: Throwable) {
+
+    }
+
 }

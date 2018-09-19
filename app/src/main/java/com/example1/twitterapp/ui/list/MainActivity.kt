@@ -16,12 +16,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import android.widget.ImageView
 import android.widget.ProgressBar
-import com.example1.twitterapp.BaseApplication
+import com.example1.twitterapp.data.RestClient
 import com.example1.twitterapp.model.User
 import com.example1.twitterapp.repository.TweetsRepository
+import com.example1.twitterapp.repository.TweetsRepositoryImpl
 import com.example1.twitterapp.util.ImageUtil
-import dagger.android.AndroidInjection
-import javax.inject.Inject
+
 
 
 class MainActivity : BaseActivity(), LifecycleOwner {
@@ -34,11 +34,6 @@ class MainActivity : BaseActivity(), LifecycleOwner {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: ListAdapter
     private var profilePic: ImageView? = null
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    lateinit var viewModel : TweetsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +71,9 @@ class MainActivity : BaseActivity(), LifecycleOwner {
     override fun loadView(){
         if(NetworkUtil.isConnected(applicationContext)){
             showProgress()
-            viewModel = ViewModelProviders.of(this, viewModelFactory)[TweetsViewModel::class.java]
+
+            val repository = TweetsRepositoryImpl(RestClient.instance!!)
+            val viewModel = TweetsViewModel(repository)
             viewModel.init()
             viewModel.tweets!!.observe(this, Observer<List<Tweets>> { tweetList: List<Tweets>? ->
                 // Update views

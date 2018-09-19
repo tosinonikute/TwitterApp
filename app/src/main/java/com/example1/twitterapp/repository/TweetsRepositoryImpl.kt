@@ -13,31 +13,43 @@ import retrofit2.Response
 
 class TweetsRepositoryImpl(var twitterService: TwitterService) : TweetsRepository {
 
-    override fun fetchTweets(): LiveData<List<Tweets>> {
+    override fun fetchTweets(callback: TweetsRepositoryCallback): LiveData<List<Tweets>> {
         val data = MutableLiveData<List<Tweets>>()
         twitterService.listTweets().enqueue(object: Callback<List<Tweets>> {
             override fun onResponse(call: Call<List<Tweets>>, response: Response<List<Tweets>>){
-                data.setValue(response.body())
+                response.body()?.let{
+                    data.setValue(response.body())
+                }
             }
 
             override fun onFailure(call: Call<List<Tweets>>, t: Throwable){
-                Log.e("error", t.localizedMessage)
+                callback.handleTweetsError(t)
             }
         });
         return data
     }
 
-    override fun fetchUser(userId: Int): LiveData<User> {
-        val data = MutableLiveData<User>()
+    override fun fetchUser(userId: Int, callback: UserRepositoryCallback) {
         twitterService.listSingleUser(userId).enqueue(object: Callback<User> {
             override fun onResponse(call: Call<User>, response: Response<User>){
-                data.setValue(response.body())
+                response.body()?.let{
+                    callback.handleUsersResponse(response)
+                }
             }
 
             override fun onFailure(call: Call<User>, t: Throwable){
-                Log.e("error", t.localizedMessage)
+                callback.handleUsersError(t)
             }
         });
-        return data
+    }
+
+    interface TweetsRepositoryCallback {
+        fun handleTweetsError(error: Throwable)
+    }
+
+    interface UserRepositoryCallback {
+        fun handleUsersResponse(response: Response<User>)
+
+        fun handleUsersError(error: Throwable)
     }
 }

@@ -15,12 +15,16 @@ import com.example1.twitterapp.ui.base.BaseActivity
 
 import kotlinx.android.synthetic.main.activity_detail.*
 import android.content.Intent
+import android.databinding.DataBindingUtil
+import com.example1.twitterapp.data.RestClient
+import com.example1.twitterapp.databinding.ActivityDetailBinding
 import com.example1.twitterapp.model.Tweets
 import com.example1.twitterapp.model.User
+import com.example1.twitterapp.repository.TweetsRepositoryImpl
 import com.example1.twitterapp.ui.list.ListAdapter
+import com.example1.twitterapp.ui.list.TweetsViewModel
 import com.example1.twitterapp.util.ImageUtil
 import com.example1.twitterapp.util.NetworkUtil
-import javax.inject.Inject
 
 class DetailActivity : BaseActivity() {
 
@@ -29,15 +33,13 @@ class DetailActivity : BaseActivity() {
     private lateinit var imageView : ImageView
     private lateinit var name : TextView
     private lateinit var button : Button
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    lateinit var viewModel : DetailViewModel
+    private lateinit var databinding : ActivityDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
+
+        databinding = DataBindingUtil.setContentView<ActivityDetailBinding>(this, R.layout.activity_detail)
+
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
@@ -76,12 +78,12 @@ class DetailActivity : BaseActivity() {
     override fun loadView(){
         if(userId != -1) {
             if(NetworkUtil.isConnected(applicationContext)){
-                viewModel = ViewModelProviders.of(this, viewModelFactory)[DetailViewModel::class.java]
-                viewModel.init(userId)
-                viewModel.user!!.observe(this, Observer<User> { myuser: User? ->
-                    // Update views
-                    displayUserInfo(myuser!!)
-                })
+
+                val repository = TweetsRepositoryImpl(RestClient.instance!!)
+                val viewModel = DetailViewModel(repository)
+                databinding.detailViewModel = viewModel
+                viewModel.getUser(userId)
+                databinding.executePendingBindings()
 
             } else {
                 displayedFailedConnection()

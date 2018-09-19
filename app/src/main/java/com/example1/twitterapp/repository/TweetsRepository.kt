@@ -6,7 +6,7 @@ import com.example1.twitterapp.model.User
 
 interface TweetsRepository {
 
-    fun fetchTweets(): LiveData<List<Tweets>>
+    fun fetchTweets(callback: TweetsRepositoryImpl.TweetsRepositoryCallback): LiveData<List<Tweets>>
 
-    fun fetchUser(userId: Int): LiveData<User>
+    fun fetchUser(userId: Int, callback: TweetsRepositoryImpl.UserRepositoryCallback)
 }

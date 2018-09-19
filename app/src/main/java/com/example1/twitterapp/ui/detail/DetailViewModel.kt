@@ -1,23 +1,45 @@
 package com.example1.twitterapp.ui.detail
 
 import android.arch.lifecycle.LiveData
-import javax.inject.Inject
 import android.arch.lifecycle.ViewModel
+import android.databinding.ObservableField
+import android.graphics.drawable.Drawable
+import android.support.annotation.VisibleForTesting
+import android.util.Log
 import com.example1.twitterapp.model.User
 import com.example1.twitterapp.repository.TweetsRepository
+import com.example1.twitterapp.repository.TweetsRepositoryImpl
+import retrofit2.Response
+import java.util.*
 
 
 class DetailViewModel // Instructs Dagger 2 to provide the TweetsRepository data.
-@Inject
-constructor(private val tweetsRepo: TweetsRepository) : ViewModel() {
+constructor(private val tweetsRepo: TweetsRepository) : ViewModel(), TweetsRepositoryImpl.UserRepositoryCallback {
 
-    var user: LiveData<User>? = null
-        private set
+    var name = ObservableField<String>()
 
-    fun init(userId: Int) {
-        if (this.user != null) {
-            return
+    fun getUser(userId: Int) {
+        if (userId != -1) {
+            tweetsRepo.fetchUser(userId, this)
         }
-        user = tweetsRepo.fetchUser(userId)
     }
+
+    override fun handleUsersResponse(response: Response<User>) {
+        if (response.isSuccessful()) {
+            val user = response.body()
+            if (user != null) {
+                renderSuccess(user)
+            }
+        }
+    }
+
+    @VisibleForTesting
+    fun renderSuccess(user: User) {
+        name.set(user.name)
+    }
+
+    override fun handleUsersError(error: Throwable) {
+
+    }
+
 }
