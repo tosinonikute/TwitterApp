@@ -6,7 +6,7 @@ import com.example1.twitterapp.model.User
 
 interface TweetsRepository {
 
-    fun fetchTweets(callback: TweetsRepositoryImpl.TweetsRepositoryCallback): LiveData<List<Tweets>>
+    fun fetchTweets(successHandler: (List<Tweets>?) -> Unit, failureHandler: (Throwable?) -> Unit)
 
-    fun fetchUser(userId: Int, callback: TweetsRepositoryImpl.UserRepositoryCallback)
+    fun fetchUser(userId: Int, successHandler: (User?) -> Unit, failureHandler: (Throwable?) -> Unit)
 }

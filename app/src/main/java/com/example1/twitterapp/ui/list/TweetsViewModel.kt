@@ -1,32 +1,34 @@
 package com.example1.twitterapp.ui.list
 
-import android.arch.lifecycle.LiveData
+import javax.inject.Inject
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.example1.twitterapp.model.Tweets
 import com.example1.twitterapp.repository.TweetsRepository
-import com.example1.twitterapp.repository.TweetsRepositoryImpl
-import retrofit2.HttpException
-import retrofit2.Response
-import java.io.IOException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 
-class TweetsViewModel // provide the TweetsRepository data manually in activity.
-constructor(private val tweetsRepo: TweetsRepository) : ViewModel(), TweetsRepositoryImpl.TweetsRepositoryCallback {
+class TweetsViewModel // Instructs Dagger 2 to provide the TweetsRepository data.
+@Inject
+constructor(private val tweetsRepo: TweetsRepository) : ViewModel() {
 
-    var tweets: LiveData<List<Tweets>>? = null
-        private set
+    var tweets = MutableLiveData<List<Tweets>>()
 
-    fun init() {
-        if (this.tweets != null) {
-            return
-        }
-        tweets = tweetsRepo.fetchTweets(this)
-    }
+    var isLoading = MutableLiveData<Boolean>()
 
-    override fun handleTweetsError(error: Throwable) {
+    var apiError = MutableLiveData<Throwable>()
 
+    fun getTweets() {
+        isLoading.value = true
+        tweetsRepo.fetchTweets(
+                {
+                    tweets.value = it
+                    isLoading.value = false
+                },
+
+                {
+                    apiError.value = it
+                    isLoading.value = false
+                })
     }
 
 }

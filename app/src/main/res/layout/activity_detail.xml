@@ -1,25 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.detail.DetailActivity"
-    tools:showIn="@layout/activity_detail">
-
-    <data>
-        <import
-            type="android.view.View" />
-
-        <variable
-            name="detailViewModel"
-            type="com.example1.twitterapp.ui.detail.DetailViewModel" />
-    </data>
-
-
-    <android.support.constraint.ConstraintLayout
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/content_detail_layout"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        tools:context=".ui.detail.DetailActivity">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -41,11 +28,12 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
+                android:id="@+id/linear_profile_banner"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="20dp"
-                android:layout_marginTop="50dp"
+                android:padding="@dimen/profile_banner_padding"
+                android:layout_marginTop="@dimen/profile_banner_padding"
                 android:gravity="center">
 
                 <TextView
@@ -53,15 +41,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:textColor="@color/colorDark"
-                    android:text="@={detailViewModel.name}"/>
+                    android:textColor="@color/colorDark" />
 
                 <ImageView
                     android:id="@+id/img_tweet_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/space_top"
-                    android:src="@drawable/place_holder" />
+                    android:src="@drawable/place_holder"/>
+
+
 
 
                 <Button
@@ -69,20 +58,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/space_top"
-                    android:text="Share Button"
+                    android:text="@string/share_button_text"
                     android:src="@drawable/place_holder" />
 
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/view_separator"
                 android:background="@color/colorPrimaryDark"/>
 
         </LinearLayout>
 
-    </android.support.constraint.ConstraintLayout>
-
-
-
-</layout>
+</android.support.design.widget.CoordinatorLayout>

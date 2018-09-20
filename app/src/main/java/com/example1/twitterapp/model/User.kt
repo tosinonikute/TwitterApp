@@ -31,13 +31,13 @@ data class User(
         val profileSidebarBorderColor: String? = null,
         val profileTextColor: String? = null,
         val verified: Boolean? = null,
-
         @SerializedName("profile_image_url")
         var profileImageUrl: String? = null,
         val timeZone: Any? = null,
         val url: Any? = null,
         val contributorsEnabled: Boolean? = null,
         val profileBackgroundTile: Boolean? = null,
+        @SerializedName("profile_banner_url")
         val profileBannerUrl: String? = null,
         val entities: Entities? = null,
         val statusesCount: Int? = null,

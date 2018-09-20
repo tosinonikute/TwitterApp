@@ -31,25 +31,24 @@
 
             <TextView
                 android:id="@+id/username"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="@dimen/username_margin_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="username"/>
+                android:text="@string/username_text"/>
 
             <TextView
                 android:id="@+id/description"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/description_margin_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Other Text"/>
+                android:text="@string/othertext_text"/>
 
             <TextView
-
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/othertext_margin_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Other Text"/>
+                android:text="@string/othertext_text"/>
 
         </LinearLayout>
 
@@ -57,7 +56,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/view_separator"
         android:background="@color/colorLine"/>
 
 </LinearLayout>

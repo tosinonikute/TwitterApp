@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
 import com.example1.twitterapp.R
+import com.example1.twitterapp.util.NetworkError
+import dagger.android.AndroidInjection
 
 abstract class BaseActivity: AppCompatActivity() {
 
@@ -13,11 +15,8 @@ abstract class BaseActivity: AppCompatActivity() {
     private var snackbarOffline: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-    }
-
-    fun displayedFailedConnection(){
-        displayOfflineSnackBar("No Connection")
     }
 
     fun displayOfflineSnackBar(str: String){
@@ -27,4 +26,11 @@ abstract class BaseActivity: AppCompatActivity() {
         snackbarOffline!!.show()
     }
 
+    fun displayedFailedConnection(){
+        displayOfflineSnackBar("No Connection")
+    }
+
+    fun handleApiError(error: Throwable){
+        displayOfflineSnackBar(NetworkError.apiError(error))
+    }
 }

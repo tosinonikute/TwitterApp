@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">TwitterApp</string>
     <string name="title_activity_detail">DetailActivity</string>
+    <string name="username_text">username</string>
+    <string name="othertext_text">Other Text</string>
+    <string name="tweet_text">Tweets by User</string>
+    <string name="user_desc_text">User Description</string>
+    <string name="share_button_text">Share Button</string>
 </resources>

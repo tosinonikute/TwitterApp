@@ -14,30 +14,30 @@ import retrofit2.Response
 
 class DetailViewModelTest{
 
-    @Mock
-    lateinit var detailViewModel: DetailViewModel
-
-    @Mock
-    lateinit var tweetsRepository: TweetsRepository
-
-    val userId = 1;
-
-    @Before
-    @Throws(Exception::class)
-    fun setUp() {
-
-        MockitoAnnotations.initMocks(this)
-        detailViewModel = Mockito.spy<DetailViewModel>(DetailViewModel(tweetsRepository))
-    }
-
-    @Test
-    fun getCallFetchTweets() {
-
-        // Trigger
-        detailViewModel.getUser(userId)
-
-        // Validation
-        Mockito.verify<TweetsRepository>(tweetsRepository, Mockito.times(1))
-                .fetchUser(userId, detailViewModel)
-    }
+//    @Mock
+//    lateinit var detailViewModel: DetailViewModel
+//
+//    @Mock
+//    lateinit var tweetsRepository: TweetsRepository
+//
+//    val userId = 1;
+//
+//    @Before
+//    @Throws(Exception::class)
+//    fun setUp() {
+//
+//        MockitoAnnotations.initMocks(this)
+//        detailViewModel = Mockito.spy<DetailViewModel>(DetailViewModel(tweetsRepository))
+//    }
+//
+//    @Test
+//    fun getCallFetchTweets() {
+//
+//        // Trigger
+//        detailViewModel.getUser(userId)
+//
+//        // Validation
+//        Mockito.verify<TweetsRepository>(tweetsRepository, Mockito.times(1))
+//                .fetchUser(userId, detailViewModel)
+//    }
 }

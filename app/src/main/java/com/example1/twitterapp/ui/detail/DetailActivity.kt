@@ -4,7 +4,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Button
@@ -15,16 +14,11 @@ import com.example1.twitterapp.ui.base.BaseActivity
 
 import kotlinx.android.synthetic.main.activity_detail.*
 import android.content.Intent
-import android.databinding.DataBindingUtil
-import com.example1.twitterapp.data.RestClient
-import com.example1.twitterapp.databinding.ActivityDetailBinding
-import com.example1.twitterapp.model.Tweets
+import android.widget.LinearLayout
 import com.example1.twitterapp.model.User
 import com.example1.twitterapp.repository.TweetsRepositoryImpl
-import com.example1.twitterapp.ui.list.ListAdapter
-import com.example1.twitterapp.ui.list.TweetsViewModel
 import com.example1.twitterapp.util.ImageUtil
-import com.example1.twitterapp.util.NetworkUtil
+import javax.inject.Inject
 
 class DetailActivity : BaseActivity() {
 
@@ -33,20 +27,23 @@ class DetailActivity : BaseActivity() {
     private lateinit var imageView : ImageView
     private lateinit var name : TextView
     private lateinit var button : Button
-    private lateinit var databinding : ActivityDetailBinding
+    private lateinit var viewModel: DetailViewModel
+    private lateinit var linearLayout: LinearLayout
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        databinding = DataBindingUtil.setContentView<ActivityDetailBinding>(this, R.layout.activity_detail)
-
+        setContentView(R.layout.activity_detail)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
+        viewModel = ViewModelProviders.of(this, viewModelFactory)[DetailViewModel::class.java]
+
         getBundleData()
         initViews()
-        loadView()
-
+        attachObserver()
         share()
     }
 
@@ -54,6 +51,7 @@ class DetailActivity : BaseActivity() {
         name = findViewById(R.id.username_detail) as TextView
         button = findViewById(R.id.share) as Button
         imageView = findViewById(R.id.img_tweet_detail) as ImageView
+        linearLayout = findViewById(R.id.linear_profile_banner) as LinearLayout
     }
 
     fun share(){
@@ -75,27 +73,31 @@ class DetailActivity : BaseActivity() {
         }
     }
 
-    override fun loadView(){
+    private fun attachObserver() {
         if(userId != -1) {
-            if(NetworkUtil.isConnected(applicationContext)){
+            viewModel.getUser(userId)
 
-                val repository = TweetsRepositoryImpl(RestClient.instance!!)
-                val viewModel = DetailViewModel(repository)
-                databinding.detailViewModel = viewModel
-                viewModel.getUser(userId)
-                databinding.executePendingBindings()
-
-            } else {
-                displayedFailedConnection()
-            }
+            viewModel.apiError.observe(this, Observer<Throwable> {
+                it?.apply {
+                    handleApiError(it)
+                }
+            })
+            viewModel.user.observe(this, Observer<User> { user: User? ->
+                // Update views
+                displayUserInfo(user!!)
+            })
         }
+    }
+
+    override fun loadView(){
+        attachObserver()
     }
 
     fun displayUserInfo(user: User){
         name.text = user.name
-        val image = imageView;
-        ImageUtil.displayImage(imageView.context, user.profileImageUrl!!, image,
-                R.drawable.place_holder)
+        ImageUtil.displayImage(imageView.context, user.profileImageUrl!!, imageView, R.drawable.place_holder)
+        toolbar.title = user.name
+        ImageUtil.displayImageDrawable(applicationContext, user.profileBannerUrl.toString(), linearLayout)
     }
 
     fun shareLink(link: String, title: String) {

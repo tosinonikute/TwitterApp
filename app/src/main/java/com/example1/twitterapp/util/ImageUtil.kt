@@ -1,7 +1,6 @@
 package com.example1.twitterapp.util
 
 import android.content.Context
-import android.databinding.BindingAdapter
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -30,12 +29,6 @@ class ImageUtil{
                             linearLayout.background = resource
                         }
                     })
-        }
-
-        @BindingAdapter("imageUrl")
-        fun setImageUrl(imageView: ImageView, url: String) {
-            val context = imageView.getContext()
-            Glide.with(context).load(url).into(imageView)
         }
     }
 }
